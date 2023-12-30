@@ -1,7 +1,5 @@
 package com.example.application.views.main;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Image;
