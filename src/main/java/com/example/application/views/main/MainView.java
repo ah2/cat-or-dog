@@ -67,7 +67,7 @@ public class MainView extends VerticalLayout {
 			catImage.setSrc(cats.get_img_url());
 		catImage.addClickListener(e -> {
 			Notification.show("you choose cat!").setPosition(Notification.Position.MIDDLE);
-			catImage.setSrc(cats.get_img_url());
+			//catImage.setSrc(cats.get_img_url());
 			create_view(main, dogs, cats, dscore, cscore+1);
 		});
 
@@ -75,7 +75,7 @@ public class MainView extends VerticalLayout {
 			dogImage.setSrc(dogs.get_img_url());
 		dogImage.addClickListener(e -> {
 			Notification.show("you choose dog!").setPosition(Notification.Position.MIDDLE);
-			dogImage.setSrc(dogs.get_img_url());
+			//dogImage.setSrc(dogs.get_img_url());
 			create_view(main, dogs, cats, dscore+1, cscore);
 
 		});
@@ -92,9 +92,9 @@ public class MainView extends VerticalLayout {
 		cat_lay.setAlignItems(Alignment.CENTER);
 
 		Label dog_label = new Label("Dogs!");
-		dog_label.setSizeFull();
+		dog_label.setSizeUndefined();
 		Label cat_label = new Label("Cats!");
-		cat_label.setSizeFull();
+		cat_label.setSizeUndefined();
 
 		dog_lay.add(dog_label, dogImage, dog_score);
 		dog_lay.setWidth("50%");
@@ -109,6 +109,7 @@ public class MainView extends VerticalLayout {
 		// Create layout
 		HorizontalLayout footerLayout = new HorizontalLayout();
 		footerLayout.setAlignItems(Alignment.CENTER);
+		
 		main.add(footerLayout);
 	}
 
