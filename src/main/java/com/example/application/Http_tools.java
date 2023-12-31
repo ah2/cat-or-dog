@@ -17,6 +17,7 @@ import com.example.application.views.main.MainView;
 public class Http_tools {
 	String key;
 	String url;
+	int score;
 
 	public Http_tools(String url, String key) {
 		this.url = url;
