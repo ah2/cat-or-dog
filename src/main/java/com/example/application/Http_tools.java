@@ -109,11 +109,8 @@ public class Http_tools {
 			System.out.println("keys: "+cat_key + " - " + dog_key);
 			System.out.println("urls: "+catURL + " - " + dogURL);
 			
-			String cat_api_url = "https://api.thecatapi.com/v1/images/search?limit=1";
-	    	String dog_api_url = "https://api.thedogapi.com/v1/images/search?limit=1";
-	    	
-			Http_tools dogs = new Http_tools(dog_api_url, dog_key);
-			Http_tools cats = new Http_tools(cat_api_url, cat_key);
+			Http_tools dogs = new Http_tools(catURL, dog_key);
+			Http_tools cats = new Http_tools(dogURL, cat_key);
 
 			String cat = cats.get_img_url();
 			String dog = dogs.get_img_url();

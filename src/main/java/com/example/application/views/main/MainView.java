@@ -126,8 +126,8 @@ public class MainView extends VerticalLayout {
 			dogURL = prop.getProperty("DOG_API_URL");
 
 			// reading url from file is broken
-			catURL = "https://api.thecatapi.com/v1/images/search?limit=1";
-			dogURL = "https://api.thedogapi.com/v1/images/search?limit=1";
+			//catURL = "https://api.thecatapi.com/v1/images/search?limit=1";
+			//dogURL = "https://api.thedogapi.com/v1/images/search?limit=1";
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
