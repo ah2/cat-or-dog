@@ -4,21 +4,20 @@ import java.io.IOException;
 import java.util.Properties;
 
 import com.example.application.Http_tools;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.dom.Element;
-import com.vaadin.flow.dom.ElementFactory;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 @SuppressWarnings("removal")
 @PageTitle("Cat or Dog")
-@Route(value = "")
+
+@Route(value = "catordog")
 public class MainView extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
@@ -40,51 +39,53 @@ public class MainView extends VerticalLayout {
 		Http_tools cats = new Http_tools(catURL, cat_key);
 
 		create_view(this, dogs, cats, 0, 0);
-		
+
 	}
 
-	private void create_view(VerticalLayout main,Http_tools dogs, Http_tools cats, int dscore, int cscore) {
-		
+	private void create_view(VerticalLayout main, Http_tools dogs, Http_tools cats, int dscore, int cscore) {
+
 		main.removeAll();
-		
+
 		// getting start pics
 		String cat = cats.get_img_url();
 		String dog = dogs.get_img_url();
 
-		Label dog_score = new Label(""+dscore);
-		Label cat_score = new Label(""+cscore);
+		Label dog_score = new Label("" + dscore);
+		Label cat_score = new Label("" + cscore);
 
 		Image catImage = new Image();
 		Image dogImage = new Image();
 
-		catImage.setWidth(200, Unit.PIXELS);
-		catImage.setHeight(200, Unit.PIXELS);
-
-		dogImage.setWidth(200, Unit.PIXELS);
-		dogImage.setHeight(200, Unit.PIXELS);
+		Div cat_box = new Div();
+		Div dog_box = new Div();
 
 		if (cat != null)
 			catImage.setSrc(cats.get_img_url());
+		catImage.setId("cat image");
 		catImage.addClickListener(e -> {
 			Notification.show("you choose cat!").setPosition(Notification.Position.MIDDLE);
-			//catImage.setSrc(cats.get_img_url());
-			create_view(main, dogs, cats, dscore, cscore+1);
+			// catImage.setSrc(cats.get_img_url());
+			create_view(main, dogs, cats, dscore, cscore + 1);
+			// findElement(By.id("pushmebutton")).click();
 		});
 
 		if (dog != null)
 			dogImage.setSrc(dogs.get_img_url());
+		dogImage.setSizeFull();
+		dogImage.setId("dog image");
 		dogImage.addClickListener(e -> {
 			Notification.show("you choose dog!").setPosition(Notification.Position.MIDDLE);
-			//dogImage.setSrc(dogs.get_img_url());
-			create_view(main, dogs, cats, dscore+1, cscore);
+			// dogImage.setSrc(dogs.get_img_url());
+			create_view(main, dogs, cats, dscore + 1, cscore);
 
 		});
 
 		HorizontalLayout fittingLayout = new HorizontalLayout();
-		dogImage.setWidth("50%");
-		dogImage.setHeight("90%");
-		catImage.setWidth("50%");
-		catImage.setHeight("90%");
+
+		dog_box.setWidth(250, Unit.PIXELS);
+		dog_box.setHeight(250, Unit.PIXELS);
+		cat_box.setWidth(250, Unit.PIXELS);
+		cat_box.setHeight(250, Unit.PIXELS);
 
 		dog_lay = new VerticalLayout();
 		cat_lay = new VerticalLayout();
@@ -92,15 +93,23 @@ public class MainView extends VerticalLayout {
 		cat_lay.setAlignItems(Alignment.CENTER);
 
 		Label dog_label = new Label("Dogs!");
+		dog_label.getElement().setProperty("innerHTML", "<b>Dogs!</b>");
+
 		dog_label.setSizeUndefined();
 		Label cat_label = new Label("Cats!");
+		cat_label.getElement().setProperty("innerHTML", "<b>Cats!</b>");
 		cat_label.setSizeUndefined();
-
-		dog_lay.add(dog_label, dogImage, dog_score);
-		dog_lay.setWidth("50%");
-		cat_lay.add(cat_label, catImage, cat_score);
-		cat_lay.setWidth("50%");
 		
+		
+		dog_box.add(dogImage);
+		cat_box.add(catImage);
+		dogImage.setSizeFull();
+		catImage.setSizeFull();
+		
+		
+		dog_lay.add(dog_label, dog_box, dog_score);
+		cat_lay.add(cat_label, cat_box, cat_score);
+
 		fittingLayout.add(dog_lay);
 		fittingLayout.add(cat_lay);
 
@@ -109,8 +118,36 @@ public class MainView extends VerticalLayout {
 		// Create layout
 		HorizontalLayout footerLayout = new HorizontalLayout();
 		footerLayout.setAlignItems(Alignment.CENTER);
-		
+
 		main.add(footerLayout);
+	}
+
+	private Float getARatio(Image element) {
+		int h = Integer.parseInt(element.getHeight());
+		int w = Integer.parseInt(element.getWidth());
+		return (w * 1f) / h;
+	}
+
+	private Float getARatio(Div element) {
+		int h = Integer.parseInt(element.getHeight());
+		int w = Integer.parseInt(element.getWidth());
+		return (w * 1f) / h;
+	}
+
+	private int getHeight(Image element) {
+		return Integer.parseInt(element.getHeight());
+	}
+
+	private int getHeight(Div element) {
+		return Integer.parseInt(element.getHeight());
+	}
+
+	private int getWidth(Image element) {
+		return Integer.parseInt(element.getWidth());
+	}
+
+	private int getWidth(Div element) {
+		return Integer.parseInt(element.getWidth());
 	}
 
 	private String Get_api_keys() {
@@ -124,10 +161,6 @@ public class MainView extends VerticalLayout {
 			dog_key = prop.getProperty("API_DOG_KEY_VALUE");
 			catURL = prop.getProperty("CAT_API_URL");
 			dogURL = prop.getProperty("DOG_API_URL");
-
-			// reading url from file is broken
-			//catURL = "https://api.thecatapi.com/v1/images/search?limit=1";
-			//dogURL = "https://api.thedogapi.com/v1/images/search?limit=1";
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
