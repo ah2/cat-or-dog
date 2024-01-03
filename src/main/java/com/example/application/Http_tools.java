@@ -25,19 +25,16 @@ public class Http_tools {
 	}
 
 	public String get_img_url() {
-		String response = getImgJsonStr(url, key);
-		// System.out.println("got Json: " + response);
-		// Notification.show("got url: " + url);
-		
-		//System.out.println("url: " + url+" key: "+key);
+		String response = getImgJsonStr(url, key, 1);
+
 		ArrayList<String> urls;
+		
 		if (response != null) {
 			urls= pars_to_url(response);
 			if (urls != null)
 				return pars_to_url(response).get(0);
 		}
-		// System.out.println("got url: " + url);
-
+		
 		System.err.println("empty reponse!");
 		return null;
 	}
@@ -60,18 +57,22 @@ public class Http_tools {
 		}
 	}
 
-	public static String getImgJsonStr(String url, String api_key) {
+	@SuppressWarnings("deprecation")
+	public static String getImgJsonStr(String url_string, String api_key, int num) {
 		try {
-			@SuppressWarnings("deprecation")
-			URL obj = new URL(url);
-			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+			
+			if(num <1)
+				num = 1;
+			
+			URL url_obj = new URL(url_string+"?limit="+num);
+			HttpURLConnection http_connection = (HttpURLConnection) url_obj.openConnection();
 
-			con.setRequestMethod("GET");
-			con.setRequestProperty("x-api-key", api_key);
+			http_connection.setRequestMethod("GET");
+			http_connection.setRequestProperty("x-api-key", api_key);
 
-			int responseCode = con.getResponseCode();
+			int responseCode = http_connection.getResponseCode();
 			if (responseCode == 200) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+				BufferedReader in = new BufferedReader(new InputStreamReader(http_connection.getInputStream()));
 				String inputLine;
 				StringBuilder response = new StringBuilder();
 
@@ -82,8 +83,10 @@ public class Http_tools {
 
 				return response.toString();
 			}
+			
 			System.err.println("Error response: " + responseCode + "!");
 			return null;
+			
 		} catch (Exception e) {
 			System.err.println(e);
 			return null;
