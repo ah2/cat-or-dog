@@ -1,5 +1,6 @@
 package com.example.application.views.main;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -8,6 +9,7 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
@@ -30,7 +32,7 @@ public class MainView extends VerticalLayout {
 	private String dogURL;
 	private int dog_c;
 	private int cat_c;
-	private Label score;
+	private Div score_div;
 
 	protected VerticalLayout dog_lay;
 	protected VerticalLayout cat_lay;
@@ -43,6 +45,11 @@ public class MainView extends VerticalLayout {
 		Http_tools dogs = new Http_tools(dogURL, dog_key);
 		Http_tools cats = new Http_tools(catURL, cat_key);
 
+		if (new File("./frontend/styles/styles.css").isFile())
+			System.out.println("found style sheet");
+		else
+			System.err.println("no style sheet found");
+
 		create_view(this, dogs, cats);
 
 	}
@@ -53,12 +60,13 @@ public class MainView extends VerticalLayout {
 
 		Image catImage = new Image();
 		catImage.setId("cat image");
-		
+
 		Image dogImage = new Image();
 		dogImage.setId("dog image");
 
 		Div cat_box = new Div();
 		Div dog_box = new Div();
+		score_div = new Div();
 
 		class imageClick implements ComponentEventListener<ClickEvent<Image>> {
 
@@ -70,11 +78,11 @@ public class MainView extends VerticalLayout {
 				switch (name) {
 				case "cat":
 					cat_c = 0;
-					dogImage.setSrc(cats.get_img_url());
+					catImage.setSrc(cats.get_img_url());
 					break;
 				case "dog":
 					dog_c = 0;
-					catImage.setSrc(cats.get_img_url());
+					dogImage.setSrc(dogs.get_img_url());
 					break;
 				default:
 					System.err.println("image name not recognized");
@@ -95,22 +103,21 @@ public class MainView extends VerticalLayout {
 					break;
 				default:
 				}
-				if (dog_c > cat_c)
-					score = new Label("Dogs are winning!");
-				else if (dog_c > cat_c)
-					score = new Label("cats are winning!");
-				else
-					score = new Label("Cats or dogs? you decide!");
-
-				//super.notify();
+				if (dog_c > cat_c) {
+					score_div.removeAll();
+					score_div.add(new Label(String.format("Dogs are winning %d to %d!", dog_c, cat_c)));
+				} else if (cat_c > dog_c) {
+					score_div.removeAll();
+					score_div.add(new Label(String.format("Cats are winning %d to %d!", cat_c, dog_c)));
+				} else {
+					score_div.removeAll();
+					score_div.add(new Label(String.format("its a tie %d to %d!", dog_c, cat_c)));
+				}
 			}
 		}
 
 		dogImage.addClickListener(new imageClick("dog"));
 		catImage.addClickListener(new imageClick("cat"));
-
-		score = new Label("Cats or dogs? you decide!");
-		score.setClassName("big_label"); // For control in CSS using .big_label{} (for example)
 
 		HorizontalLayout fittingLayout = new HorizontalLayout();
 
@@ -126,12 +133,14 @@ public class MainView extends VerticalLayout {
 
 		Label dog_label = new Label("Dogs!");
 		dog_label.getElement().setProperty("innerHTML", "<b>Dogs!</b>");
-
 		dog_label.setSizeUndefined();
+		
 		Label cat_label = new Label("Cats!");
 		cat_label.getElement().setProperty("innerHTML", "<b>Cats!</b>");
 		cat_label.setSizeUndefined();
 
+		score_div.add(new Label("Cats or dog? you decide"));
+		
 		dog_box.add(dogImage);
 		cat_box.add(catImage);
 		dogImage.setSizeFull();
@@ -145,7 +154,8 @@ public class MainView extends VerticalLayout {
 
 		main.add(fittingLayout);
 		main.setAlignItems(Alignment.CENTER);
-		main.add(score);
+		
+		main.add(score_div);
 
 		// Create layout
 		HorizontalLayout footerLayout = new HorizontalLayout();
@@ -153,7 +163,6 @@ public class MainView extends VerticalLayout {
 
 		main.add(footerLayout);
 	}
-
 
 	private String Get_api_keys() {
 		Properties prop = new Properties();
