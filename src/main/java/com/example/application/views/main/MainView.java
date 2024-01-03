@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.util.Properties;
 
 import com.example.application.Http_tools;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
@@ -25,6 +28,8 @@ public class MainView extends VerticalLayout {
 	private String dog_key;
 	private String catURL;
 	private String dogURL;
+	private int dog_c;
+	private int cat_c;
 
 	protected VerticalLayout dog_lay;
 	protected VerticalLayout cat_lay;
@@ -37,20 +42,13 @@ public class MainView extends VerticalLayout {
 		Http_tools dogs = new Http_tools(dogURL, dog_key);
 		Http_tools cats = new Http_tools(catURL, cat_key);
 
-		create_view(this, dogs, cats, 0, 0);
+		create_view(this, dogs, cats);
 
 	}
 
-	private void create_view(VerticalLayout main, Http_tools dogs, Http_tools cats, int dscore, int cscore) {
+	private void create_view(VerticalLayout main, Http_tools dogs, Http_tools cats) {
 
 		main.removeAll();
-
-		// getting start pics
-		String cat = cats.get_img_url();
-		String dog = dogs.get_img_url();
-
-		Label dog_score = new Label("" + dscore);
-		Label cat_score = new Label("" + cscore);
 
 		Image catImage = new Image();
 		Image dogImage = new Image();
@@ -58,26 +56,52 @@ public class MainView extends VerticalLayout {
 		Div cat_box = new Div();
 		Div dog_box = new Div();
 
-		if (cat != null)
-			catImage.setSrc(cats.get_img_url());
+		catImage.setSrc(cats.get_img_url());
 		catImage.setId("cat image");
-		catImage.addClickListener(e -> {
-			Notification.show("you choose cat!").setPosition(Notification.Position.MIDDLE);
-			// catImage.setSrc(cats.get_img_url());
-			create_view(main, dogs, cats, dscore, cscore + 1);
-			// findElement(By.id("pushmebutton")).click();
-		});
-
-		if (dog != null)
-			dogImage.setSrc(dogs.get_img_url());
+		
+		dogImage.setSrc(dogs.get_img_url());
 		dogImage.setSizeFull();
 		dogImage.setId("dog image");
-		dogImage.addClickListener(e -> {
-			Notification.show("you choose dog!").setPosition(Notification.Position.MIDDLE);
-			// dogImage.setSrc(dogs.get_img_url());
-			create_view(main, dogs, cats, dscore + 1, cscore);
 
-		});
+		class imageClick implements ComponentEventListener<ClickEvent<Image>> {
+
+			private static final long serialVersionUID = 1L;
+			String name;
+
+			public imageClick(String name) {
+				this.name = name;
+				switch (name) {
+				case "cat":
+					cat_c = 0;
+					break;
+				case "dog":
+					dog_c = 0;
+					break;
+				default:
+					System.err.println("image name not recognized");
+				}
+
+			}
+
+			@Override
+			public void onComponentEvent(ClickEvent<Image> event) {
+
+				switch (name) {
+				case "cat":
+					cat_c++;
+					event.getSource().setSrc(cats.get_img_url());
+					break;
+				case "dog":
+					dog_c++;
+					event.getSource().setSrc(dogs.get_img_url());
+					break;
+				default:
+				}
+			}
+		}
+
+		dogImage.addClickListener(new imageClick("dog"));
+		catImage.addClickListener(new imageClick("cat"));
 
 		HorizontalLayout fittingLayout = new HorizontalLayout();
 
@@ -98,16 +122,14 @@ public class MainView extends VerticalLayout {
 		Label cat_label = new Label("Cats!");
 		cat_label.getElement().setProperty("innerHTML", "<b>Cats!</b>");
 		cat_label.setSizeUndefined();
-		
-		
+
 		dog_box.add(dogImage);
 		cat_box.add(catImage);
 		dogImage.setSizeFull();
 		catImage.setSizeFull();
-		
-		
-		dog_lay.add(dog_label, dog_box, dog_score);
-		cat_lay.add(cat_label, cat_box, cat_score);
+
+		dog_lay.add(dog_label, dog_box);
+		cat_lay.add(cat_label, cat_box);
 
 		fittingLayout.add(dog_lay);
 		fittingLayout.add(cat_lay);
