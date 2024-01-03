@@ -16,7 +16,6 @@ import com.vaadin.flow.router.Route;
 
 @SuppressWarnings("removal")
 @PageTitle("Cat or Dog")
-
 @Route(value = "catordog")
 public class MainView extends VerticalLayout {
 
