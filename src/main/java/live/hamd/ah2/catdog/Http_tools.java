@@ -1,4 +1,4 @@
-package com.example.application;
+package live.hamd.ah2.catdog;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.application.views.main.MainView;
+import live.hamd.ah2.catdog.views.main.Cat_or_Dog;
 
 public class Http_tools {
 	String key;
@@ -100,7 +100,7 @@ public class Http_tools {
 		Properties prop = new Properties();
 		try {
 			// load a properties file from class path, inside static method
-			prop.load(MainView.class.getClassLoader().getResourceAsStream("apikey.properties"));
+			prop.load(Cat_or_Dog.class.getClassLoader().getResourceAsStream("apikey.properties"));
 
 			// get the property value
 			String cat_key = prop.getProperty("API_CAT_KEY_VALUE");

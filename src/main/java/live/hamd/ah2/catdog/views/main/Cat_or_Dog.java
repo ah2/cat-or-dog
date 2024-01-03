@@ -1,57 +1,48 @@
-package com.example.application.views.main;
+package live.hamd.ah2.catdog.views.main;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.example.application.Http_tools;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Unit;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import live.hamd.ah2.catdog.Http_tools;
+
 @SuppressWarnings("removal")
 @PageTitle("Cat or Dog")
 @Route(value = "catordog")
-public class MainView extends VerticalLayout {
+public class Cat_or_Dog extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
 
-	private String cat_key;
-	private String dog_key;
-	private String catURL;
-	private String dogURL;
-	private int dog_c;
-	private int cat_c;
+	private String cat_api_key;
+	private String dog_api_key;
+	private String cat_api_URL;
+	private String dog_api_URL;
+	private int dog_click_count;
+	private int cat_click_count;
 	private Div score_div;
 
 	protected VerticalLayout dog_lay;
 	protected VerticalLayout cat_lay;
 
-	public MainView() {
+	public Cat_or_Dog() {
 
-		if (cat_key == null || dog_key == null || catURL == null || dogURL == null)
+		if (cat_api_key == null || dog_api_key == null || cat_api_URL == null || dog_api_URL == null)
 			Get_api_keys();
 
-		Http_tools dogs = new Http_tools(dogURL, dog_key);
-		Http_tools cats = new Http_tools(catURL, cat_key);
-
-		if (new File("./frontend/styles/styles.css").isFile())
-			System.out.println("found style sheet");
-		else
-			System.err.println("no style sheet found");
+		Http_tools dogs = new Http_tools(dog_api_URL, dog_api_key);
+		Http_tools cats = new Http_tools(cat_api_URL, cat_api_key);
 
 		create_view(this, dogs, cats);
-
 	}
 
 	private void create_view(VerticalLayout main, Http_tools dogs, Http_tools cats) {
@@ -77,11 +68,11 @@ public class MainView extends VerticalLayout {
 				this.name = name;
 				switch (name) {
 				case "cat":
-					cat_c = 0;
+					cat_click_count = 0;
 					catImage.setSrc(cats.get_img_url());
 					break;
 				case "dog":
-					dog_c = 0;
+					dog_click_count = 0;
 					dogImage.setSrc(dogs.get_img_url());
 					break;
 				default:
@@ -94,24 +85,24 @@ public class MainView extends VerticalLayout {
 
 				switch (name) {
 				case "cat":
-					cat_c++;
+					cat_click_count++;
 					event.getSource().setSrc(cats.get_img_url());
 					break;
 				case "dog":
-					dog_c++;
+					dog_click_count++;
 					event.getSource().setSrc(dogs.get_img_url());
 					break;
 				default:
 				}
-				if (dog_c > cat_c) {
+				if (dog_click_count > cat_click_count) {
 					score_div.removeAll();
-					score_div.add(new Label(String.format("Dogs are winning %d to %d!", dog_c, cat_c)));
-				} else if (cat_c > dog_c) {
+					score_div.add(new Label(String.format("Dogs are winning %d to %d!", dog_click_count, cat_click_count)));
+				} else if (cat_click_count > dog_click_count) {
 					score_div.removeAll();
-					score_div.add(new Label(String.format("Cats are winning %d to %d!", cat_c, dog_c)));
+					score_div.add(new Label(String.format("Cats are winning %d to %d!", cat_click_count, dog_click_count)));
 				} else {
 					score_div.removeAll();
-					score_div.add(new Label(String.format("its a tie %d to %d!", dog_c, cat_c)));
+					score_div.add(new Label(String.format("its a tie %d to %d!", dog_click_count, cat_click_count)));
 				}
 			}
 		}
@@ -119,7 +110,7 @@ public class MainView extends VerticalLayout {
 		dogImage.addClickListener(new imageClick("dog"));
 		catImage.addClickListener(new imageClick("cat"));
 
-		HorizontalLayout fittingLayout = new HorizontalLayout();
+		HorizontalLayout joint_Layout = new HorizontalLayout();
 
 		dog_box.setWidth(250, Unit.PIXELS);
 		dog_box.setHeight(250, Unit.PIXELS);
@@ -134,13 +125,13 @@ public class MainView extends VerticalLayout {
 		Label dog_label = new Label("Dogs!");
 		dog_label.getElement().setProperty("innerHTML", "<b>Dogs!</b>");
 		dog_label.setSizeUndefined();
-		
+
 		Label cat_label = new Label("Cats!");
 		cat_label.getElement().setProperty("innerHTML", "<b>Cats!</b>");
 		cat_label.setSizeUndefined();
 
 		score_div.add(new Label("Cats or dog? you decide"));
-		
+
 		dog_box.add(dogImage);
 		cat_box.add(catImage);
 		dogImage.setSizeFull();
@@ -149,12 +140,12 @@ public class MainView extends VerticalLayout {
 		dog_lay.add(dog_label, dog_box);
 		cat_lay.add(cat_label, cat_box);
 
-		fittingLayout.add(dog_lay);
-		fittingLayout.add(cat_lay);
+		joint_Layout.add(dog_lay);
+		joint_Layout.add(cat_lay);
 
-		main.add(fittingLayout);
+		main.add(joint_Layout);
 		main.setAlignItems(Alignment.CENTER);
-		
+
 		main.add(score_div);
 
 		// Create layout
@@ -168,13 +159,13 @@ public class MainView extends VerticalLayout {
 		Properties prop = new Properties();
 		try {
 			// load a properties file from class path, inside static method
-			prop.load(MainView.class.getClassLoader().getResourceAsStream("apikey.properties"));
+			prop.load(Cat_or_Dog.class.getClassLoader().getResourceAsStream("apikey.properties"));
 
 			// get the property value
-			cat_key = prop.getProperty("API_CAT_KEY_VALUE");
-			dog_key = prop.getProperty("API_DOG_KEY_VALUE");
-			catURL = prop.getProperty("CAT_API_URL");
-			dogURL = prop.getProperty("DOG_API_URL");
+			cat_api_key = prop.getProperty("API_CAT_KEY_VALUE");
+			dog_api_key = prop.getProperty("API_DOG_KEY_VALUE");
+			cat_api_URL = prop.getProperty("CAT_API_URL");
+			dog_api_URL = prop.getProperty("DOG_API_URL");
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
