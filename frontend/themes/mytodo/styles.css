@@ -1,3 +1,6 @@
-div.image {
+Image.dogImage {
+  object-fit: contain;
+}
+Image.catImage {
   object-fit: contain;
 }

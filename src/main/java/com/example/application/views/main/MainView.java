@@ -30,6 +30,7 @@ public class MainView extends VerticalLayout {
 	private String dogURL;
 	private int dog_c;
 	private int cat_c;
+	private Label score;
 
 	protected VerticalLayout dog_lay;
 	protected VerticalLayout cat_lay;
@@ -51,17 +52,13 @@ public class MainView extends VerticalLayout {
 		main.removeAll();
 
 		Image catImage = new Image();
+		catImage.setId("cat image");
+		
 		Image dogImage = new Image();
+		dogImage.setId("dog image");
 
 		Div cat_box = new Div();
 		Div dog_box = new Div();
-
-		catImage.setSrc(cats.get_img_url());
-		catImage.setId("cat image");
-		
-		dogImage.setSrc(dogs.get_img_url());
-		dogImage.setSizeFull();
-		dogImage.setId("dog image");
 
 		class imageClick implements ComponentEventListener<ClickEvent<Image>> {
 
@@ -73,14 +70,15 @@ public class MainView extends VerticalLayout {
 				switch (name) {
 				case "cat":
 					cat_c = 0;
+					dogImage.setSrc(cats.get_img_url());
 					break;
 				case "dog":
 					dog_c = 0;
+					catImage.setSrc(cats.get_img_url());
 					break;
 				default:
 					System.err.println("image name not recognized");
 				}
-
 			}
 
 			@Override
@@ -97,11 +95,22 @@ public class MainView extends VerticalLayout {
 					break;
 				default:
 				}
+				if (dog_c > cat_c)
+					score = new Label("Dogs are winning!");
+				else if (dog_c > cat_c)
+					score = new Label("cats are winning!");
+				else
+					score = new Label("Cats or dogs? you decide!");
+
+				//super.notify();
 			}
 		}
 
 		dogImage.addClickListener(new imageClick("dog"));
 		catImage.addClickListener(new imageClick("cat"));
+
+		score = new Label("Cats or dogs? you decide!");
+		score.setClassName("big_label"); // For control in CSS using .big_label{} (for example)
 
 		HorizontalLayout fittingLayout = new HorizontalLayout();
 
@@ -135,6 +144,8 @@ public class MainView extends VerticalLayout {
 		fittingLayout.add(cat_lay);
 
 		main.add(fittingLayout);
+		main.setAlignItems(Alignment.CENTER);
+		main.add(score);
 
 		// Create layout
 		HorizontalLayout footerLayout = new HorizontalLayout();
@@ -143,33 +154,6 @@ public class MainView extends VerticalLayout {
 		main.add(footerLayout);
 	}
 
-	private Float getARatio(Image element) {
-		int h = Integer.parseInt(element.getHeight());
-		int w = Integer.parseInt(element.getWidth());
-		return (w * 1f) / h;
-	}
-
-	private Float getARatio(Div element) {
-		int h = Integer.parseInt(element.getHeight());
-		int w = Integer.parseInt(element.getWidth());
-		return (w * 1f) / h;
-	}
-
-	private int getHeight(Image element) {
-		return Integer.parseInt(element.getHeight());
-	}
-
-	private int getHeight(Div element) {
-		return Integer.parseInt(element.getHeight());
-	}
-
-	private int getWidth(Image element) {
-		return Integer.parseInt(element.getWidth());
-	}
-
-	private int getWidth(Div element) {
-		return Integer.parseInt(element.getWidth());
-	}
 
 	private String Get_api_keys() {
 		Properties prop = new Properties();
