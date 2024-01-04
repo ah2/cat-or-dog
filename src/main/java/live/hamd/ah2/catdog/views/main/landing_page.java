@@ -1,10 +1,13 @@
 package live.hamd.ah2.catdog.views.main;
 
-import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.dom.ElementFactory;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -16,20 +19,24 @@ public class landing_page extends VerticalLayout {
 
 	public landing_page() {
 		
-		Label wip =new Label("W.I.P.");
-		wip.setSizeFull();
-		
 		Div w = new Div();
-		w.setWidth("90%");
-		w.setHeight("90%");
-		w.add(wip);
 		
-		Anchor anchor = new Anchor();
+		w.setWidth("150px");
+		w.setHeight("150px");
+		w.setText("W.I.P.");
+		
+		
+		Element element = ElementFactory.createDiv("go to cat or dog");
+		element.appendChild(ElementFactory.createSpan("color:blue"));
+		
+		System.out.println( element.getText());
+		
+		
+		Div anchor = new Div();
 		anchor.setText("go to cat or dog");
 		anchor.getElement().addEventListener("click", e -> anchor.getUI().ifPresent(ui -> ui.navigate("catordog")));
 		
 		add(w);
 		add(anchor);
 	}
-
 }

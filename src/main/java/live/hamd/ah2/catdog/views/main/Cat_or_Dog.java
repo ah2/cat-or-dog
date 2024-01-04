@@ -38,27 +38,39 @@ public class Cat_or_Dog extends VerticalLayout {
 
 		if (cat_api_key == null || dog_api_key == null || cat_api_URL == null || dog_api_URL == null)
 			Get_api_keys();
-
+		
+		//setup api calling objects
 		Http_tools dogs = new Http_tools(dog_api_URL, dog_api_key);
 		Http_tools cats = new Http_tools(cat_api_URL, cat_api_key);
-
-		create_view(this, dogs, cats);
+		
+		//create view
+		VerticalLayout main = create_view(dogs, cats);
+		
+		add(main);
+	
 	}
 
-	private void create_view(VerticalLayout main, Http_tools dogs, Http_tools cats) {
-
-		main.removeAll();
-
+	private VerticalLayout create_view(Http_tools dogs, Http_tools cats) {
+		
 		Image catImage = new Image();
-		catImage.setId("cat image");
-
 		Image dogImage = new Image();
-		dogImage.setId("dog image");
 
 		Div cat_box = new Div();
 		Div dog_box = new Div();
-		score_div = new Div();
+		
+		
+		int width = 300;
+		int height = 250;
+		Unit unit = Unit.PIXELS;
 
+		dog_box.setWidth(width, unit);
+		dog_box.setHeight(height, unit);
+		cat_box.setWidth(width, unit);
+		cat_box.setHeight(height, unit);
+		
+		score_div = new Div();
+		score_div.add(new Label("Cats or dog? you decide"));
+		
 		class imageClick implements ComponentEventListener<ClickEvent<Image>> {
 
 			private static final long serialVersionUID = 1L;
@@ -110,27 +122,18 @@ public class Cat_or_Dog extends VerticalLayout {
 		dogImage.addClickListener(new imageClick("dog"));
 		catImage.addClickListener(new imageClick("cat"));
 
-		HorizontalLayout joint_Layout = new HorizontalLayout();
-
-		dog_box.setWidth(250, Unit.PIXELS);
-		dog_box.setHeight(250, Unit.PIXELS);
-		cat_box.setWidth(250, Unit.PIXELS);
-		cat_box.setHeight(250, Unit.PIXELS);
-
 		dog_lay = new VerticalLayout();
 		cat_lay = new VerticalLayout();
 		dog_lay.setAlignItems(Alignment.CENTER);
 		cat_lay.setAlignItems(Alignment.CENTER);
 
-		Label dog_label = new Label("Dogs!");
+		Div dog_label = new Div("Dogs!");
 		dog_label.getElement().setProperty("innerHTML", "<b>Dogs!</b>");
 		dog_label.setSizeUndefined();
 
-		Label cat_label = new Label("Cats!");
+		Div cat_label = new Div();
 		cat_label.getElement().setProperty("innerHTML", "<b>Cats!</b>");
 		cat_label.setSizeUndefined();
-
-		score_div.add(new Label("Cats or dog? you decide"));
 
 		dog_box.add(dogImage);
 		cat_box.add(catImage);
@@ -140,19 +143,16 @@ public class Cat_or_Dog extends VerticalLayout {
 		dog_lay.add(dog_label, dog_box);
 		cat_lay.add(cat_label, cat_box);
 
+		HorizontalLayout joint_Layout = new HorizontalLayout();
 		joint_Layout.add(dog_lay);
 		joint_Layout.add(cat_lay);
+		
+		VerticalLayout result= new VerticalLayout();
+		result.setAlignItems(Alignment.CENTER);
+		result.add(joint_Layout);
+		result.add(score_div);
 
-		main.add(joint_Layout);
-		main.setAlignItems(Alignment.CENTER);
-
-		main.add(score_div);
-
-		// Create layout
-		HorizontalLayout footerLayout = new HorizontalLayout();
-		footerLayout.setAlignItems(Alignment.CENTER);
-
-		main.add(footerLayout);
+		return result;
 	}
 
 	private String Get_api_keys() {
