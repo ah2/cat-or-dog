@@ -69,7 +69,7 @@ public class Cat_or_Dog extends VerticalLayout {
 		cat_box.setHeight(height, unit);
 		
 		score_div = new Div();
-		score_div.add(new Label("Cats or dog? you decide"));
+		score_div.add(new Div("Cats or dog? you decide"));
 		
 		class imageClick implements ComponentEventListener<ClickEvent<Image>> {
 
@@ -108,13 +108,13 @@ public class Cat_or_Dog extends VerticalLayout {
 				}
 				if (dog_click_count > cat_click_count) {
 					score_div.removeAll();
-					score_div.add(new Label(String.format("Dogs are winning %d to %d!", dog_click_count, cat_click_count)));
+					score_div.add(new Div(String.format("Dogs are winning %d to %d!", dog_click_count, cat_click_count)));
 				} else if (cat_click_count > dog_click_count) {
 					score_div.removeAll();
-					score_div.add(new Label(String.format("Cats are winning %d to %d!", cat_click_count, dog_click_count)));
+					score_div.add(new Div(String.format("Cats are winning %d to %d!", cat_click_count, dog_click_count)));
 				} else {
 					score_div.removeAll();
-					score_div.add(new Label(String.format("its a tie %d to %d!", dog_click_count, cat_click_count)));
+					score_div.add(new Div(String.format("its a tie %d to %d!", dog_click_count, cat_click_count)));
 				}
 			}
 		}

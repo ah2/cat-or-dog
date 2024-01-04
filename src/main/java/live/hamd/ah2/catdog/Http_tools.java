@@ -18,28 +18,31 @@ public class Http_tools {
 	String key;
 	String url;
 	int score;
+	ArrayList<String> prev_urls;
+	
 
 	public Http_tools(String url, String key) {
 		this.url = url;
 		this.key = key;
+		this.prev_urls = new ArrayList<String>();
 	}
+	
+	public String get_img_url(){
+		return get_img_url(1).get(0);
+	}
+	
+	public ArrayList<String> get_img_url(int num) {
+		String response = getImgJsonStr(url, key, num);
 
-	public String get_img_url() {
-		String response = getImgJsonStr(url, key, 1);
-
-		ArrayList<String> urls;
-		
 		if (response != null) {
-			urls= pars_to_url(response);
-			if (urls != null)
-				return pars_to_url(response).get(0);
+			return pars_to_url(response);
 		}
 		
 		System.err.println("empty reponse!");
 		return null;
 	}
 
-	public static ArrayList<String> pars_to_url(String data) {
+	public ArrayList<String> pars_to_url(String data) {
 		//System.out.println(data);
 		ArrayList<String> urls = new ArrayList<String>();
 		try {
@@ -49,8 +52,11 @@ public class Http_tools {
 			String url = jsonLineItem.getString("url");
 			urls.add(url);
 		}
+		
+		prev_urls.addAll(urls);
 		return urls;
 		}
+		
 		catch(JSONException e) {
 			System.err.println("not a json array!");
 			return null;
@@ -117,10 +123,21 @@ public class Http_tools {
 
 			String cat = cats.get_img_url();
 			String dog = dogs.get_img_url();
+			
+			ArrayList<String> dog_imgs = dogs.get_img_url(20);
 
 			if (cat != null && dog != null) {
 				System.out.println("received dog image url: " + cat);
 				System.out.println("received cat image url: " + dog);
+				
+				StringBuilder sb = new StringBuilder();
+				sb.append("received: "+dog_imgs.size()+" dog image urls:\n");
+				
+				for(String d : dog_imgs) {
+					sb.append(d+"\n"); }
+				
+				System.out.println(sb.toString());
+				
 			}
 
 		} catch (IOException ex) {
