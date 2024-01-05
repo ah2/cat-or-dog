@@ -4,6 +4,8 @@ This project used Vaadin to create a Spring Boot app that runs in a browser.
 
 ## Running the application
 
+### rename apikey.properties found under src\main\resources, add keys
+
 The project is a standard Maven project. To run it from the command line,
 type `mvnw` (Windows), or `./mvnw` (Mac & Linux), then open
 http://localhost:8080 in your browser.

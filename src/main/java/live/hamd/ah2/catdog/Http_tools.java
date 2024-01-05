@@ -16,33 +16,32 @@ import org.json.JSONObject;
 import live.hamd.ah2.catdog.views.main.Cat_or_Dog;
 
 public class Http_tools {
-	String key;
-	String url;
+	String api_key;
+	String api_base_url;
 	int score;
 	ArrayList<String> prev_urls;
 	
 
 	public Http_tools(String url, String key) {
-		this.url = url;
-		this.key = key;
+		this.api_base_url = url;
+		this.api_key = key;
 		this.prev_urls = new ArrayList<String>();
 	}
 	
 	public String get_img_url(){
-		 ArrayList<String> resp = get_img_url(1);
-		 if(resp != null)
-			 return resp.get(0);
+		 ArrayList<String> url = get_img_url(1);
+		 if(url != null)
+			 return url.get(0);
 		 return null;
 	}
 
 	public ArrayList<String> get_img_url(int num) {
 		
-		HttpResponse<String> response = http_request(num);
+		HttpResponse<String> response = http_request_images(num);
 		
 		if (response.statusCode() == 200) {
 			return pars_json_return_urls(response.body());
 		}
-		
 		System.err.println("Error code: " + response.statusCode()+"!");
 		return null;
 	}
@@ -68,22 +67,23 @@ public class Http_tools {
 		}
 	}
 	
-	public HttpResponse<String> http_request(int num) {
+	public HttpResponse<String> http_request_images(int num) {
 		
 		HttpClient httpClient = HttpClient.newHttpClient();
 		HttpRequest request;
 		
 		try {
 			request = HttpRequest.newBuilder()
-			  .header("x-api-key", key)
-			  .uri(new URI(url+"?limit="+num+"&mime_types=gif")).build();
+			  .header("x-api-key", api_key)
+			  .uri(new URI(api_base_url+"?limit="+num)).build();
 			
 			//System.err.println(request.headers());
+			
+			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-			return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+			return response;
 		//return null;
 		} catch (URISyntaxException e) {
-
 			e.printStackTrace();
 			return null;
 		} catch (IOException e) {
@@ -118,7 +118,7 @@ public class Http_tools {
 			String cat = cats.get_img_url();
 			String dog = dogs.get_img_url();
 			
-			ArrayList<String> dog_imgs = dogs.get_img_url(15);
+			ArrayList<String> dog_imgs = dogs.get_img_url(5);
 
 			if (cat != null && dog != null) {
 				System.out.println("received dog image url: " + cat);
