@@ -13,11 +13,12 @@ public class landing_page extends VerticalLayout {
 
 	public landing_page() {
 		
-		Div w = new Div();
+		Div wip = new Div();
 		
-		w.setWidth("150px");
-		w.setHeight("150px");
-		w.setText("W.I.P.");
+		wip.setWidth("150px");
+		wip.setHeight("150px");
+		wip.setText("W. I. P.");
+		wip.setClassName("wip");
 		
 		
 		Div anchor = new Div();
@@ -27,7 +28,7 @@ public class landing_page extends VerticalLayout {
 		
 		anchor.getElement().addEventListener("click", e -> anchor.getUI().ifPresent(ui -> ui.navigate("catordog")));
 		
-		add(w);
+		add(wip);
 		add(anchor);
 	}
 }

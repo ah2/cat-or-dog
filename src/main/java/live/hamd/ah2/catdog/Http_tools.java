@@ -1,10 +1,11 @@
 package live.hamd.ah2.catdog;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -28,28 +29,32 @@ public class Http_tools {
 	}
 	
 	public String get_img_url(){
-		return get_img_url(1).get(0);
+		 ArrayList<String> resp = get_img_url(1);
+		 if(resp != null)
+			 return resp.get(0);
+		 return null;
 	}
-	
-	public ArrayList<String> get_img_url(int num) {
-		String response = getImgJsonStr(url, key, num);
 
-		if (response != null) {
-			return pars_to_url(response);
+	public ArrayList<String> get_img_url(int num) {
+		
+		HttpResponse<String> response = http_request(num);
+		
+		if (response.statusCode() == 200) {
+			return pars_json_return_urls(response.body());
 		}
 		
-		System.err.println("empty reponse!");
+		System.err.println("Error code: " + response.statusCode()+"!");
 		return null;
 	}
 
-	public ArrayList<String> pars_to_url(String data) {
-		//System.out.println(data);
+	public ArrayList<String> pars_json_return_urls(String data) {
+		//System.err.println(data);
 		ArrayList<String> urls = new ArrayList<String>();
 		try {
 		JSONArray jArray = new JSONArray(data);
 		for (Object o : jArray) {
-			JSONObject jsonLineItem = (JSONObject) o;
-			String url = jsonLineItem.getString("url");
+			JSONObject json_Item = (JSONObject) o;
+			String url = json_Item.getString("url");
 			urls.add(url);
 		}
 		
@@ -62,42 +67,31 @@ public class Http_tools {
 			return null;
 		}
 	}
-
-	@SuppressWarnings("deprecation")
-	public static String getImgJsonStr(String url_string, String api_key, int num) {
+	
+	public HttpResponse<String> http_request(int num) {
+		
+		HttpClient httpClient = HttpClient.newHttpClient();
+		HttpRequest request;
+		
 		try {
+			request = HttpRequest.newBuilder()
+			  .header("x-api-key", key)
+			  .uri(new URI(url+"?limit="+num+"&mime_types=gif")).build();
 			
-			if(num <1)
-				num = 1;
-			
-			URL url_obj = new URL(url_string+"?limit="+num);
-			HttpURLConnection http_connection = (HttpURLConnection) url_obj.openConnection();
+			//System.err.println(request.headers());
 
-			http_connection.setRequestMethod("GET");
-			http_connection.setRequestProperty("x-api-key", api_key);
+			return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+		//return null;
+		} catch (URISyntaxException e) {
 
-			int responseCode = http_connection.getResponseCode();
-			if (responseCode == 200) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(http_connection.getInputStream()));
-				String inputLine;
-				StringBuilder response = new StringBuilder();
-
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-				in.close();
-
-				return response.toString();
-			}
-			
-			System.err.println("Error response: " + responseCode + "!");
+			e.printStackTrace();
 			return null;
-			
-		} catch (Exception e) {
-			System.err.println(e);
-			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
-
+		return null;
 	}
 	
 	
@@ -124,7 +118,7 @@ public class Http_tools {
 			String cat = cats.get_img_url();
 			String dog = dogs.get_img_url();
 			
-			ArrayList<String> dog_imgs = dogs.get_img_url(20);
+			ArrayList<String> dog_imgs = dogs.get_img_url(15);
 
 			if (cat != null && dog != null) {
 				System.out.println("received dog image url: " + cat);
@@ -139,6 +133,9 @@ public class Http_tools {
 				System.out.println(sb.toString());
 				
 			}
+			
+			//HttpResponse<String> tst = dogs.new_conn();
+			//System.err.println(tst.body());
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
