@@ -1,14 +1,10 @@
 package live.hamd.ah2.catdog.views.main;
 
-import java.io.IOException;
-import java.util.Properties;
-
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
@@ -16,17 +12,13 @@ import com.vaadin.flow.router.Route;
 
 import live.hamd.ah2.catdog.Http_tools;
 
-@SuppressWarnings("removal")
 @PageTitle("Cat or Dog")
 @Route(value = "catordog")
 public class Cat_or_Dog extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
 
-	private String cat_api_key;
-	private String dog_api_key;
-	private String cat_api_URL;
-	private String dog_api_URL;
+	
 	private int dog_click_count;
 	private int cat_click_count;
 	private Div score_div;
@@ -35,17 +27,14 @@ public class Cat_or_Dog extends VerticalLayout {
 	protected VerticalLayout cat_lay;
 
 	public Cat_or_Dog() {
-
-		if (cat_api_key == null || dog_api_key == null || cat_api_URL == null || dog_api_URL == null)
-			Get_api_keys();
 		
 		//setup api calling objects
-		Http_tools dogs = new Http_tools(dog_api_URL, dog_api_key);
-		Http_tools cats = new Http_tools(cat_api_URL, cat_api_key);
+		Http_tools dog_api = new Http_tools("dog");
+		Http_tools cat_api = new Http_tools("cat");
 		
 		//create view
-		VerticalLayout main = create_view(dogs, cats);
-		
+		VerticalLayout main = create_view(dog_api, cat_api);
+
 		add(main);
 	
 	}
@@ -81,11 +70,11 @@ public class Cat_or_Dog extends VerticalLayout {
 				switch (name) {
 				case "cat":
 					cat_click_count = 0;
-					catImage.setSrc(cats.get_img_url());
+					catImage.setSrc(cats.get_rand_img_url());
 					break;
 				case "dog":
 					dog_click_count = 0;
-					dogImage.setSrc(dogs.get_img_url());
+					dogImage.setSrc(dogs.get_rand_img_url());
 					break;
 				default:
 					System.err.println("image name not recognized");
@@ -98,11 +87,11 @@ public class Cat_or_Dog extends VerticalLayout {
 				switch (name) {
 				case "cat":
 					cat_click_count++;
-					event.getSource().setSrc(cats.get_img_url());
+					event.getSource().setSrc(cats.get_rand_img_url());
 					break;
 				case "dog":
 					dog_click_count++;
-					event.getSource().setSrc(dogs.get_img_url());
+					event.getSource().setSrc(dogs.get_rand_img_url());
 					break;
 				default:
 				}
@@ -153,23 +142,5 @@ public class Cat_or_Dog extends VerticalLayout {
 		result.add(score_div);
 
 		return result;
-	}
-
-	private String Get_api_keys() {
-		Properties prop = new Properties();
-		try {
-			// load a properties file from class path, inside static method
-			prop.load(Cat_or_Dog.class.getClassLoader().getResourceAsStream("apikey.properties"));
-
-			// get the property value
-			cat_api_key = prop.getProperty("API_CAT_KEY_VALUE");
-			dog_api_key = prop.getProperty("API_DOG_KEY_VALUE");
-			cat_api_URL = prop.getProperty("CAT_API_URL");
-			dog_api_URL = prop.getProperty("DOG_API_URL");
-
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-		return null;
 	}
 }
