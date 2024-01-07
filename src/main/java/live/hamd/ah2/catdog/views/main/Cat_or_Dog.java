@@ -9,11 +9,13 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 
 import live.hamd.ah2.catdog.Http_tools;
 
 @PageTitle("Cat or Dog")
-@Route(value = "catordog")
+@Route("catordog")
+@RouteAlias("")
 public class Cat_or_Dog extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;

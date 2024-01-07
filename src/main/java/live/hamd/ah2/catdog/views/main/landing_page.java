@@ -1,12 +1,13 @@
 package live.hamd.ah2.catdog.views.main;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 @PageTitle("Main")
-@Route(value = "")
+@Route(value = "main")
 public class landing_page extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
@@ -21,7 +22,7 @@ public class landing_page extends VerticalLayout {
 		wip.setClassName("wip");
 		
 		
-		Div anchor = new Div();
+		Button anchor = new Button();
 		anchor.getElement().setProperty("innerHTML", "<span style=\"color:blue\"><b>go to cat or dog</b></span>");
 		
 		anchor.setClassName("bluetext");

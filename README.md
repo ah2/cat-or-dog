@@ -6,7 +6,10 @@ rename `apikeyRENAME.properties` found under `src\main\resources to apikey.prope
 add the dog api key and the cat key values in the `apikey.properties`
 
 #running the web app
-The project is a standard Maven project. To run it from the command line,
+The project is a standard Maven project.
+you can open `mvnm.cmd` and it will build and launch directly
+
+To run it from the command line,
 type `mvnw` (Windows), or `./mvnw` (Mac & Linux), then open
 http://localhost:8080 in your browser.
 
