@@ -13,8 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import live.hamd.ah2.catdog.views.main.Cat_or_Dog;
-
 public class Http_tools {
 	String api_key;
 	String api_base_url;
@@ -55,31 +53,22 @@ public class Http_tools {
 	}
 
 	public String get_rand_img_url() {
-		ArrayList<String> url = get_rand_img_url(1);
+		String ur = api_base_url + "/search" + "?limit=" + 1;
+		ArrayList<String> url = http_request_random_images(1,ur);
 		if (url != null)
 			return url.get(0);
 		return null;
 	}
 
-	public ArrayList<String> get_rand_img_url(int num) {
 
-		HttpResponse<String> response = http_request_random_images(num);
-		if (response != null)
-			if (response.statusCode() == 200) {
-				return pars_json_filter(response.body(), "url");
-			}
-		System.err.println("Error code: " + response.statusCode() + "!");
-		return null;
-	}
-
-	private ArrayList<String> pars_json_filter(String data, String ob) {
+	private ArrayList<String> pars_json_filter(String data, String target) {
 		// System.err.println(data);
 		ArrayList<String> items = new ArrayList<String>();
 		try {
 			JSONArray jArray = new JSONArray(data);
 			for (Object o : jArray) {
 				JSONObject json_Item = (JSONObject) o;
-				String url = json_Item.getString(ob);
+				String url = json_Item.getString(target);
 				items.add(url);
 			}
 
@@ -92,43 +81,35 @@ public class Http_tools {
 			return null;
 		}
 	}
+	
+	private ArrayList<String> http_request_random_images(int num){
+		
+		String ur = api_base_url + "/search" + "?limit=" + num;
+		return http_request_random_images(num,ur);
+	}
 
-	private HttpResponse<String> http_request_random_images(int num) {
+
+	private ArrayList<String> http_request_random_images(int num, String ur) {
 
 		HttpClient httpClient = HttpClient.newHttpClient();
 		HttpRequest request;
 
 		try {
 			request = HttpRequest.newBuilder().header("x-api-key", api_key)
-					.uri(new URI(api_base_url + "/search" + "?limit=" + num)).build();
+					.uri(new URI(ur)).build();
 
 			// System.err.println(request.headers());
 
 			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-			return response;
-		} catch (URISyntaxException | InterruptedException | IOException e) {
-			e.printStackTrace();
+			if (response != null)
+				if (response.statusCode() == 200) {
+					return pars_json_filter(response.body(), "url");
+				}
+			System.err.println("Error code: " + response.statusCode() + "!");
 			return null;
-		}
-	}
-
-	private String get_img_url_by_id(String id) {
-
-		HttpClient httpClient = HttpClient.newHttpClient();
-		HttpRequest request;
-
-		try {
-			request = HttpRequest.newBuilder().header("x-api-key", api_key).uri(new URI(api_base_url + "/" + id))
-					.build();
-
-			// System.err.println(request.headers());
-
-			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-			String img_id = pars_json_filter(response.body(), "id").get(0);
-
-			return img_id;
+			
+			
 		} catch (URISyntaxException | InterruptedException | IOException e) {
 			e.printStackTrace();
 			return null;
@@ -146,8 +127,8 @@ public class Http_tools {
 
 		String cat = cats.get_rand_img_url();
 		String dog = dogs.get_rand_img_url();
-
-		ArrayList<String> dog_imgs = dogs.get_rand_img_url(15);
+		
+		ArrayList<String> dog_imgs = dogs.http_request_random_images(15);
 
 		if (cat != null && dog != null) {
 			System.out.println("received dog image url: " + cat);
