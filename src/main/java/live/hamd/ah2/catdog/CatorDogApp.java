@@ -15,10 +15,9 @@ public class CatorDogApp implements AppShellConfigurator {
 		
 		
 		//demo for api calls
-		Http_tools.api_demo();
+		Api_Tools.api_demo();
 		
 		//starting the web app
-        //SpringApplication.run(CatorDogApp.class, args);
+        SpringApplication.run(CatorDogApp.class, args);
     }
-
 }

@@ -11,7 +11,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 
-import live.hamd.ah2.catdog.Http_tools;
+import live.hamd.ah2.catdog.Api_Tools;
 
 @PageTitle("Cat or Dog")
 @Route("catordog")
@@ -31,8 +31,8 @@ public class Cat_or_Dog extends VerticalLayout {
 	public Cat_or_Dog() {
 		
 		//setup api calling objects
-		Http_tools dog_api = new Http_tools("dog");
-		Http_tools cat_api = new Http_tools("cat");
+		Api_Tools dog_api = new Api_Tools("dog");
+		Api_Tools cat_api = new Api_Tools("cat");
 		
 		//create view
 		VerticalLayout main = create_view(dog_api, cat_api);
@@ -41,7 +41,7 @@ public class Cat_or_Dog extends VerticalLayout {
 	
 	}
 
-	private VerticalLayout create_view(Http_tools dogs, Http_tools cats) {
+	private VerticalLayout create_view(Api_Tools dogs, Api_Tools cats) {
 		
 		Image catImage = new Image();
 		Image dogImage = new Image();
@@ -72,11 +72,11 @@ public class Cat_or_Dog extends VerticalLayout {
 				switch (name) {
 				case "cat":
 					cat_click_count = 0;
-					catImage.setSrc(cats.get_rand_img_url());
+					catImage.setSrc(cats.get_rand_img_url().getUrl());
 					break;
 				case "dog":
 					dog_click_count = 0;
-					dogImage.setSrc(dogs.get_rand_img_url());
+					dogImage.setSrc(dogs.get_rand_img_url().getUrl());
 					break;
 				default:
 					System.err.println("image name not recognized");
@@ -89,11 +89,11 @@ public class Cat_or_Dog extends VerticalLayout {
 				switch (name) {
 				case "cat":
 					cat_click_count++;
-					event.getSource().setSrc(cats.get_rand_img_url());
+					event.getSource().setSrc(cats.get_rand_img_url().getUrl());
 					break;
 				case "dog":
 					dog_click_count++;
-					event.getSource().setSrc(dogs.get_rand_img_url());
+					event.getSource().setSrc(dogs.get_rand_img_url().getUrl());
 					break;
 				default:
 				}
